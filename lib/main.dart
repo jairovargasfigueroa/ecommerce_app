@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ecommerce_app/src/controllers/api_service.dart';
 import 'package:flutter/material.dart';
 
 import 'route_generator.dart';
@@ -23,15 +24,23 @@ class _MyAppState extends State<MyApp> {
     // settingRepo.getCurrentLocation();
     // userRepo.getCurrentUser();
     super.initState();
+    // ApiService.instance.requestApi(
+    //     url: '/api/usuarios/login/',
+    //     method: 'POST',
+    //     body: {'username': 'cliente1', 'password': '123456'}).then((res) {
+    //   print('RESP $res');
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Brightness.light;
+    //TODO: app.module
     return MaterialApp(
         // navigatorKey: settingRepo.navigatorKey,
         title: 'App',
         initialRoute: '/Splash',
+        //TODO: app.routing
         onGenerateRoute: RouteGenerator.generateRoute,
         debugShowCheckedModeBanner: false,
         // locale: _setting.mobileLanguage.value,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:ecommerce_app/src/core/shared_preferences_utils.dart';
 
 class ApiService {
   final Dio _dio;
@@ -9,7 +10,7 @@ class ApiService {
       : _dio = Dio(BaseOptions(
             connectTimeout: const Duration(seconds: 30),
             receiveTimeout: const Duration(seconds: 30),
-            baseUrl: 'http://192.168.0.23:8000')) {
+            baseUrl: 'http://192.168.0.12:8000')) {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
         // Agrega headers comunes
@@ -17,8 +18,6 @@ class ApiService {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           // Aquí puedes agregar token si estás autenticado
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1MzA5MzAyLCJpYXQiOjE3NDUyMjI5MDIsImp0aSI6IjI4ZjU3NGNiODE3ZDQ5NTFhMDE4YWU5YjhkMGNhZTU2IiwidXNlcl9pZCI6MiwidXNlcm5hbWUiOiJjbGllbnRlMSIsInJvbCI6ImFkbWluIn0.EDOCbUe3Qgz7nnanxQJa3pqzYGdebfnxl2XqAa4FPJw'
         });
         return handler.next(options);
       },
@@ -43,6 +42,15 @@ class ApiService {
     dynamic body,
     Map<String, dynamic>? headers,
   }) async {
+    final token = await SharedPreferencesUtils.getItem('token');
+    // print('TOE $headers');
+    var finalHeaders = headers ?? Map<String, dynamic>();
+    if (token != null) {
+      finalHeaders.putIfAbsent(
+        'Authorization',
+        () => 'Bearer $token',
+      );
+    }
     try {
       final response = await _dio.request(
         url,
@@ -50,10 +58,10 @@ class ApiService {
         queryParameters: queryParams,
         options: Options(
           method: method,
-          headers: headers,
+          headers: finalHeaders,
         ),
       );
-      return jsonDecode((jsonEncode((response.data))))['results'] as T;
+      return jsonDecode((jsonEncode((response.data)))) as T;
     } catch (e) {
       rethrow;
     }

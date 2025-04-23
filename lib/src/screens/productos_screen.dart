@@ -60,18 +60,63 @@
 // }
 
 // lib/screens/product_list.dart
+import 'package:ecommerce_app/src/controllers/api_service.dart';
+import 'package:ecommerce_app/src/core/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
-import '../controllers/producto_service.dart';
+// import '../controllers/producto_service.dart';
 
-class ProductListPage extends StatelessWidget {
-  final ProductService productService = ProductService();
+class ProductListPage extends StatefulWidget {
+  @override
+  State<ProductListPage> createState() => _ProductListPageState();
+}
+
+class _ProductListPageState extends State<ProductListPage> {
+  // final ProductService productService = ProductService();
+  // int carritoCount = 0;
+  List<dynamic> carritoList = List.empty(growable: true);
+
+  void agregarAlCarrito(dynamic item) {
+    // ApiService.instance
+    //     .requestApi<List<dynamic>>(url: '/api/productos/')
+    //     .then(print);
+    setState(() {
+      carritoList.add(item);
+      SharedPreferencesUtils.setItem('carrito', carritoList);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Productos')),
-      body: FutureBuilder<List<dynamic>>(
-        future: productService.fetchProducts(),
+      appBar: AppBar(
+        title: Text('Productos'),
+        actions: [
+          IconButton(
+            icon: Row(
+              children: [
+                Text('${carritoList.length}'),
+                IconButton(
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pushNamed('/Carrito', arguments: carritoList);
+                    },
+                    icon: Icon(Icons.shopping_cart))
+              ],
+            ),
+            // color: Colors.red,
+            // iconSize: 30.0,
+            onPressed: () {
+              print('Icon button pressed');
+            },
+          )
+        ],
+      ),
+      // floatingActionButton: FloatingActionButton.small(
+      //   onPressed: funt,
+      //   child: Icon(Icons.star),
+      // ),
+      body: FutureBuilder<dynamic>(
+        future: ApiService.instance.requestApi<dynamic>(url: '/api/productos/'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -81,19 +126,75 @@ class ProductListPage extends StatelessWidget {
             return Center(child: Text('No hay productos'));
           }
 
-          final productos = snapshot.data!;
+          // print('DATA: ${snapshot.data}');
+          final productos = snapshot.data!['results'];
           return ListView.builder(
             itemCount: productos.length,
             itemBuilder: (context, index) {
-              final p = productos[index];
-              return ListTile(
-                title: Text(p['nombre']),
-                subtitle: Text('Precio: \$${p['precio']}'),
+              final item = productos[index];
+              return ListTileWidget(
+                // tile: TextButton(onPressed: funt, child: Text(p['nombre'])),
+                tile: ProductoItemWidget(
+                  title: item['nombre'],
+                  subtitle: 'Precio: \$${item['precio']}',
+                  trailing: IconButton(
+                    icon: Icon(Icons.add_circle),
+                    // color: Colors.red,
+                    // iconSize: 30.0,
+                    onPressed: () {
+                      agregarAlCarrito(item);
+                    },
+                  ),
+                ),
+                // tile: ProductoItemWidget(
+                //     item: p,
+                //     trailing: IconButton(
+                //       icon: Icon(Icons.add_circle),
+                //       // color: Colors.red,
+                //       // iconSize: 30.0,
+                //       onPressed: agregarAlCarrito,
+                //     )),
               );
             },
           );
         },
       ),
+    );
+  }
+}
+
+class ProductoItemWidget extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final Widget trailing;
+  const ProductoItemWidget(
+      {super.key,
+      required this.title,
+      required this.subtitle,
+      required this.trailing});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(subtitle),
+      trailing: trailing,
+    );
+  }
+}
+
+class ListTileWidget extends StatelessWidget {
+  final Widget tile;
+  const ListTileWidget({super.key, required this.tile});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      // mainAxisSize: MainAxisSize.max,
+      children: [
+        Text('Item'),
+        tile,
+      ],
     );
   }
 }

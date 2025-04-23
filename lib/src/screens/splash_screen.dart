@@ -1,3 +1,5 @@
+import 'package:ecommerce_app/src/controllers/api_service.dart';
+import 'package:ecommerce_app/src/core/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -11,16 +13,30 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    loadData();
+    // loadData();
+    // print('AUTHS INTI');
+    ApiService.instance.requestApi(
+        url: '/api/usuarios/login/',
+        method: 'POST',
+        body: {'username': 'cliente1', 'password': '123456'}).then((res) {
+      // print('AUTHS $res');
+      SharedPreferencesUtils.setItem('token', res['access']).then((resp) {
+        try {
+          Navigator.of(context).pushReplacementNamed('/Home', arguments: 0);
+        } catch (ignore) {}
+      }).catchError((onError) {});
+    }).catchError((onError) {
+      // print('ERR $onError');
+    });
   }
 
-  void loadData() {
-    Future.delayed(Duration(seconds: 1)).then((resp) {
-      try {
-        Navigator.of(context).pushReplacementNamed('/Home', arguments: 2);
-      } catch (ignore) {}
-    }).catchError((onError) {});
-  }
+  // void loadData() {
+  //   Future.delayed(Duration(seconds: 1)).then((resp) {
+  //     try {
+  //       Navigator.of(context).pushReplacementNamed('/Home', arguments: 0);
+  //     } catch (ignore) {}
+  //   }).catchError((onError) {});
+  // }
 
   @override
   Widget build(BuildContext context) {

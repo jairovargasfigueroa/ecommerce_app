@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/src/screens/carrito_screen.dart';
 import 'package:ecommerce_app/src/screens/login_screen.dart';
 import 'package:ecommerce_app/src/screens/tabs.dart';
 import 'package:ecommerce_app/src/screens/splash_screen.dart';
@@ -33,9 +34,11 @@ import 'package:flutter/material.dart';
 // import 'src/pages/tracking.dart';
 
 class RouteGenerator {
+  //TODO: app.routing
   static Route<dynamic> generateRoute(RouteSettings settings) {
     // Getting arguments passed in while calling Navigator.pushNamed
-    final args = settings.arguments;
+    final args = settings.arguments as dynamic;
+    print('ARGS: ${settings.name}, ${args}');
     switch (settings.name) {
       // case '/Debug':
       //   return MaterialPageRoute(builder: (_) => DebugWidget(routeArgument: args as RouteArgument));
@@ -45,6 +48,11 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => SplashScreen());
       case '/Login':
         return MaterialPageRoute(builder: (_) => LoginScreen());
+      case '/Carrito':
+        return MaterialPageRoute(
+            builder: (_) => CarritoWidget(
+                  carritoList: args,
+                ));
       // case '/SignUp':
       // return MaterialPageRoute(builder: (_) => SignUpWidget());
       // case '/MobileVerification':

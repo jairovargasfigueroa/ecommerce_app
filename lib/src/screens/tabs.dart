@@ -1,4 +1,5 @@
 import 'package:ecommerce_app/src/screens/home.dart';
+import 'package:ecommerce_app/src/screens/productos_screen.dart';
 import 'package:flutter/material.dart';
 
 // import '../elements/DrawerWidget.dart';
@@ -27,7 +28,7 @@ class TabsWidget extends StatefulWidget {
       //   currentTab = int.parse(currentTab.id);
       // }
     } else {
-      currentTab = 2;
+      currentTab = 0;
     }
   }
 
@@ -63,8 +64,11 @@ class _TabsWidgetState extends State<TabsWidget> {
         // case 1:
         //   widget.currentPage = MapWidget(parentScaffoldKey: widget.scaffoldKey, routeArgument: widget.routeArgument);
         //   break;
-        case 2:
+        case 0:
           widget.currentPage = HomeScreen();
+          break;
+        case 1:
+          widget.currentPage = ProductListPage();
           break;
         // case 3:
         //   widget.currentPage = OrdersWidget(parentScaffoldKey: widget.scaffoldKey);
@@ -106,14 +110,14 @@ class _TabsWidgetState extends State<TabsWidget> {
           },
           // this will be set when a new tab is tapped
           items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.notifications),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.location_on),
-              label: '',
-            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.notifications),
+            //   label: '',
+            // ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.location_on),
+            //   label: '',
+            // ),
             BottomNavigationBarItem(
                 label: '',
                 icon: Container(
@@ -129,17 +133,16 @@ class _TabsWidgetState extends State<TabsWidget> {
                     //   BoxShadow(color: Theme.of(context).accentColor.withOpacity(0.4), blurRadius: 13, offset: Offset(0, 3))
                     // ],
                   ),
-                  child: new Icon(Icons.home,
-                      color: Theme.of(context).primaryColor),
+                  child: new Icon(Icons.home),
                 )),
             BottomNavigationBarItem(
               icon: new Icon(Icons.fastfood),
               label: '',
             ),
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.chat),
-              label: '',
-            ),
+            // BottomNavigationBarItem(
+            //   icon: new Icon(Icons.chat),
+            //   label: '',
+            // ),
           ],
         ),
       ),
